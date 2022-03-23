@@ -8,9 +8,13 @@
       <div class="split__right">
         <label>Priority</label>
         <select v-model="note.priority">
-          <option value="">Standard</option>
-          <option value="first">First</option>
-          <option value="second">Second</option>
+          <option
+            v-for="(priority, index) in priorities"
+            :key="index"
+            :value="priority.value"
+          >
+            {{ priority.label }}
+          </option>
         </select>
       </div>
     </div>
@@ -23,13 +27,33 @@
 
 <script>
 export default {
-  props: {
-    note: { type: Object, required: true },
-  },
   name: "NewNote",
+  data() {
+    return {
+      priorities: [
+        { label: "Standard", value: "" },
+        { label: "First", value: "first" },
+        { label: "Second", value: "second" },
+      ],
+      note: {
+        title: "",
+        description: "",
+        priority: "",
+      },
+    };
+  },
   methods: {
     addNote() {
-      this.$emit("addNote", this.note);
+      if (this.note.title === "" || this.note.description === "") {
+        this.$emit("message");
+        return false;
+      }
+
+      this.$store.dispatch("addNote", this.note);
+
+      this.note.title = "";
+      this.note.description = "";
+      this.note.priority = "";
     },
   },
 };

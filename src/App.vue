@@ -4,7 +4,7 @@
       <section>
         <div class="container">
           <Message v-if="message" :message="message" />
-          <NewNote :note="note" @addNote="addNote" />
+          <NewNote @message="showMessage" />
 
           <div class="note-header">
             <h1>{{ title }}</h1>
@@ -56,7 +56,7 @@
             </div>
           </div>
 
-          <Notes :grid="grid" :notes="notesFilter" @remove="removeNote" />
+          <Notes :grid="grid" :notes="notesFilter" />
         </div>
       </section>
     </div>
@@ -82,78 +82,24 @@ export default {
       search: "",
       message: null,
       grid: true,
-      note: {
-        title: "",
-        description: "",
-        priority: "",
-      },
-      notes: [
-        {
-          id: 1,
-          title: "First note",
-          description: "Description for first note",
-          priority: "first",
-          date: new Date(Date.now()).toLocaleString(),
-        },
-        {
-          id: 2,
-          title: "Second note",
-          description: "Description for second note",
-          priority: "second",
-          date: new Date(Date.now()).toLocaleString(),
-        },
-        {
-          id: 3,
-          title: "Third note",
-          description: "Description for third note",
-          priority: "",
-          date: new Date(Date.now()).toLocaleString(),
-        },
-        {
-          id: 4,
-          title: "Fourth note",
-          description: "Description for fourth note",
-          priority: "",
-          date: new Date(Date.now()).toLocaleString(),
-        },
-      ],
     };
   },
   computed: {
     notesFilter() {
-      if (!this.search) return this.notes;
+      const notes = this.$store.getters.getAllNotes;
+      if (!this.search) return notes;
 
       const search = this.search.trim().toLowerCase();
 
-      return this.notes.filter(
+      return notes.filter(
         (note) => note.title.toLowerCase().indexOf(search) !== -1
       );
     },
   },
   methods: {
-    addNote() {
-      let { title, description, priority } = this.note;
-
-      if (title === "" || description === "") {
-        this.message = "Form fields can't be blank!";
-        return false;
-      }
-
-      this.notes.push({
-        id: Date.now(),
-        title,
-        description,
-        priority,
-        date: new Date(Date.now()).toLocaleString(),
-      });
-
-      this.message = null;
-      this.note.title = "";
-      this.note.description = "";
-      this.note.priority = "";
-    },
-    removeNote(id) {
-      this.notes = this.notes.filter((note) => note.id !== id);
+    showMessage() {
+      this.message = "From fields can't be blank";
+      setTimeout(() => (this.message = null), 2000);
     },
   },
 };

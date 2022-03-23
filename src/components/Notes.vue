@@ -4,11 +4,8 @@
       v-for="note in notes"
       :key="note.id"
       class="note"
-      :class="{
-        full: !grid,
-        'note--first': note.priority === 'first',
-        'note--second': note.priority === 'second',
-      }">
+      :class="[{ full: !grid }, `note--${note.priority}`]"
+    >
       <div class="note-header" :class="{ full: !grid }">
         <p>{{ note.title }}</p>
         <p
@@ -36,7 +33,7 @@ export default {
   },
   methods: {
     removeNote(id) {
-      this.$emit("remove", id);
+      this.$store.dispatch("removeNote", id);
     },
   },
 };
